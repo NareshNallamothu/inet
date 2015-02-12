@@ -410,6 +410,7 @@ AODVRREQ *AODVRouting::createRREQ(const L3Address& destAddr)
     RREQIdentifier rreqIdentifier(getSelfIPAddress(), rreqId);
     rreqsArrivalTime[rreqIdentifier] = simTime();
 
+    rreqPacket->setByteLength(1);    //FIXME set a correct byte length
     return rreqPacket;
 }
 
@@ -488,6 +489,8 @@ AODVRREP *AODVRouting::createRREP(AODVRREQ *rreq, IRoute *destRoute, IRoute *ori
 
         rrep->setLifeTime(destRouteData->getLifeTime() - simTime());
     }
+
+    rrep->setByteLength(1);    //FIXME set a correct byte length
     return rrep;
 }
 
@@ -521,6 +524,7 @@ AODVRREP *AODVRouting::createGratuitousRREP(AODVRREQ *rreq, IRoute *originatorRo
     grrep->setOriginatorAddr(rreq->getDestAddr());
     grrep->setLifeTime(routeData->getLifeTime());
 
+    grrep->setByteLength(1);    //FIXME set a correct byte length
     return grrep;
 }
 
@@ -1115,6 +1119,8 @@ AODVRERR *AODVRouting::createRERR(const std::vector<UnreachableNode>& unreachabl
         node.seqNum = unreachableNodes[i].seqNum;
         rerr->setUnreachableNodes(i, node);
     }
+
+    rerr->setByteLength(1);    //FIXME set a correct byte length
     return rerr;
 }
 
