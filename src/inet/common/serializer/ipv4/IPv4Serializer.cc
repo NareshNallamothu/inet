@@ -26,10 +26,10 @@
 #include "inet/common/serializer/ipv4/headers/ip.h"
 #include "inet/common/serializer/ipv4/ICMPSerializer.h"
 #include "inet/common/serializer/ipv4/IGMPSerializer.h"
+#include "inet/common/serializer/TCPIPchecksum.h"
 #include "inet/linklayer/common/Ieee802Ctrl_m.h"
 #include "inet/networklayer/common/IPProtocolId_m.h"
 #include "inet/networklayer/ipv4/IPv4Datagram.h"
-
 
 #if defined(_MSC_VER)
 #undef s_addr    /* MSVC #definition interferes with us */
