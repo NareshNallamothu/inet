@@ -28,6 +28,8 @@
 
 #include "inet/common/serializer/ipv4/IPv4Serializer.h"
 #include "inet/common/serializer/TCPIPchecksum.h"
+#include "inet/networklayer/common/IPProtocolId_m.h"
+#include "inet/networklayer/ipv4/IGMPMessage.h"
 
 #if !defined(_WIN32) && !defined(__WIN32__) && !defined(WIN32) && !defined(__CYGWIN__) && !defined(_WIN64)
 #include <netinet/in.h>    // htonl, ntohl, ...
