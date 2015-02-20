@@ -24,6 +24,7 @@
 #include <string.h>
 
 #include <platdep/sockets.h>
+
 #include "inet/common/INETDefs.h"
 
 #include "inet/linklayer/ext/ExtInterface.h"
@@ -32,6 +33,8 @@
 #include "inet/networklayer/common/InterfaceTable.h"
 #include "inet/common/serializer/ipv4/IPv4Serializer.h"
 #include "inet/common/INETUtils.h"
+#include "inet/networklayer/common/IPProtocolId_m.h"
+#include "inet/networklayer/ipv4/IPv4Datagram.h"
 
 namespace inet {
 
