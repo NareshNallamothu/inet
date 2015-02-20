@@ -23,6 +23,7 @@
 #include "inet/common/serializer/headers/ethernethdr.h"
 #include "inet/common/serializer/ipv6/headers/ip6.h"
 #include "inet/networklayer/icmpv6/ICMPv6Message_m.h"
+#include "inet/networklayer/ipv6/IPv6Datagram.h"
 #include "inet/networklayer/ipv6/IPv6ExtensionHeaders.h"
 #include "inet/linklayer/common/Ieee802Ctrl_m.h"
 
@@ -92,12 +93,12 @@ void IPv6Serializer::serialize(const cPacket *pkt, Buffer &b, Context& c)
         switch (extHdr->getExtensionType()) {
             case IP_PROT_IPv6EXT_HOP: {
                 const IPv6HopByHopOptionsHeader *hdr = check_and_cast<const IPv6HopByHopOptionsHeader *>(extHdr);
-                b.fillNBytes(hdr->getByteLength() - 2, '\0');
+                b.fillNBytes(hdr->getByteLength() - 2, '\0');    //TODO
                 break;
             }
             case IP_PROT_IPv6EXT_DEST: {
                 const IPv6DestinationOptionsHeader *hdr = check_and_cast<const IPv6DestinationOptionsHeader *>(extHdr);
-                b.fillNBytes(hdr->getByteLength() - 2, '\0');
+                b.fillNBytes(hdr->getByteLength() - 2, '\0');    //TODO
                 break;
             }
             case IP_PROT_IPv6EXT_ROUTING: {

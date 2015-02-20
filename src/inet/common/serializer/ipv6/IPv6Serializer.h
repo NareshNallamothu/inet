@@ -18,8 +18,7 @@
 #ifndef __INET_IPV6SERIALIZER_H
 #define __INET_IPV6SERIALIZER_H
 
-#include "inet/common/serializer/ISerializer.h"
-#include "inet/networklayer/ipv6/IPv6Datagram.h"
+#include "inet/common/serializer/SerializerBase.h"
 
 namespace inet {
 
