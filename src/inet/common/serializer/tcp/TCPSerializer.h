@@ -20,7 +20,7 @@
 #define __INET_TCPSERIALIZER_H
 
 #include "inet/common/serializer/headers/defs.h"
-#include "inet/common/serializer/ISerializer.h"
+#include "inet/common/serializer/SerializerBase.h"
 #include "inet/common/serializer/tcp/headers/tcphdr.h"
 #include "inet/networklayer/common/L3Address.h"
 
