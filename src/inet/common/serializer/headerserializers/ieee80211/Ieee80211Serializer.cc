@@ -24,7 +24,6 @@
 #include "inet/common/serializer/headers/in.h"
 #include "inet/common/serializer/headers/in_systm.h"
 #include "inet/common/serializer/headers/ethernethdr.h"
-#include "inet/common/serializer/headerserializers/arp/headers/arp.h"
 
 #if !defined(_WIN32) && !defined(__WIN32__) && !defined(WIN32) && !defined(__CYGWIN__) && !defined(_WIN64)
 #include <netinet/in.h>  // htonl, ntohl, ...
@@ -573,8 +572,7 @@ cPacket* Ieee80211Serializer::parse(const unsigned char *buf, unsigned int bufsi
 #endif
 
                 case ETHERTYPE_ARP:
-                    encapPacket = new ARPPacket("arp-from-wire");
-                    ARPSerializer().parse(buf+packetLength, bufsize-packetLength, (ARPPacket *)encapPacket);
+                    encapPacket = ARPSerializer().parse(buf+packetLength, bufsize-packetLength);
                     break;
 
                 default:
