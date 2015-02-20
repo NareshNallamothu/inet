@@ -24,13 +24,17 @@
 #include "inet/common/serializer/headers/in_systm.h"
 #include "inet/common/serializer/headers/in.h"
 #include "inet/common/serializer/ipv4/headers/ip.h"
+#include "inet/common/serializer/ipv4/IPv4Serializer.h"
 #include "inet/common/serializer/sctp/headers/sctphdr.h"
 
 #include "inet/common/serializer/sctp/SCTPSerializer.h"
 
-#include "inet/transportlayer/sctp/SCTPAssociation.h"
 #include "inet/transportlayer/contract/sctp/SCTPCommand_m.h"
-#include "inet/common/serializer/ipv4/IPv4Serializer.h"
+#include "inet/transportlayer/sctp/SCTPAssociation.h"
+
+#include "inet/networklayer/common/IPProtocolId_m.h"
+
+#include "inet/networklayer/ipv4/IPv4Datagram.h"
 
 #if !defined(_WIN32) && !defined(__CYGWIN__) && !defined(_WIN64)
 #include <netinet/in.h>    // htonl, ntohl, ...
