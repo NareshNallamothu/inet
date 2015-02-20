@@ -29,6 +29,8 @@ namespace inet {
 
 namespace serializer {
 
+Register_Serializer(tcp::TCPSegment, IP_PROT, IP_PROT_TCP, TCPSerializer);
+
 // load headers into a namespace, to avoid conflicts with platform definitions of the same stuff
 #include "inet/common/serializer/headers/bsdint.h"
 #include "inet/common/serializer/headers/in.h"
@@ -50,14 +52,22 @@ namespace inet {
 using namespace serializer;
 using namespace tcp;
 
-int TCPSerializer::serialize(const TCPSegment *tcpseg,
-        unsigned char *buf, unsigned int bufsize)
+cPacket* TCPSerializer::parse(Buffer &b, Context& context)
 {
-    ASSERT(buf);
-    ASSERT(tcpseg);
-    //cMessage* cmsg;
-    struct tcphdr *tcp = (struct tcphdr *)(buf);
-    //int writtenbytes = sizeof(struct tcphdr)+tcpseg->payloadLength();
+    TCPSegment *dest = new TCPSegment("parsed-sctp");
+    parse(static_cast<unsigned char *>(b.accessNBytes(0)), b.getRemainder(), dest, true);
+    b.accessNBytes(b.getRemainder());
+    return dest;
+}
+
+void TCPSerializer::serialize(const cPacket *pkt, Buffer &b, Context& c)
+{
+    ASSERT(b.getPos() == 0);
+    const TCPSegment *tcpseg = check_and_cast<const TCPSegment *>(pkt);
+    struct tcphdr *tcp = (struct tcphdr *)(b.accessNBytes(sizeof(struct tcphdr)));
+    if (!tcp)
+        return;
+
     int writtenbytes = tcpseg->getByteLength();
 
     // fill TCP header structure
@@ -124,6 +134,7 @@ int TCPSerializer::serialize(const TCPSegment *tcpseg,
         ASSERT(TCP_HEADER_OCTETS + lengthCounter <= TCP_MAX_HEADER_OCTETS);
         tcp->th_offs = (TCP_HEADER_OCTETS + lengthCounter) / 4;    // TCP_HEADER_OCTETS = 20
     }    // if options present
+    b.seek(TCP_HEADER_OCTETS + lengthCounter);
 
     // write data
     if (tcpseg->getByteLength() > tcpseg->getHeaderLength()) {    // data present? FIXME TODO: || tcpseg->getEncapsulatedPacket()!=nullptr
@@ -137,18 +148,8 @@ int TCPSerializer::serialize(const TCPSegment *tcpseg,
         else
             memset(tcpData, 't', dataLength); // fill data part with 't'
     }
-    return writtenbytes;
-}
-
-int TCPSerializer::serialize(const TCPSegment *tcpseg,
-        unsigned char *buf, unsigned int bufsize,
-        const L3Address& srcIp, const L3Address& destIp)
-{
-    int writtenbytes = serialize(tcpseg, buf, bufsize);
-    struct tcphdr *tcp = (struct tcphdr *)(buf);
-    tcp->th_sum = checksum(tcp, writtenbytes, srcIp, destIp);
-
-    return writtenbytes;
+    tcp->th_sum = checksum(tcp, writtenbytes, c.l3AddressesPtr, c.l3AddressesLength);
+    b.seek(writtenbytes);
 }
 
 void TCPSerializer::parse(const unsigned char *buf, unsigned int bufsize, TCPSegment *tcpseg, bool withBytes)
@@ -230,36 +231,9 @@ void TCPSerializer::parse(const unsigned char *buf, unsigned int bufsize, TCPSeg
 }
 
 uint16_t TCPSerializer::checksum(const void *addr, unsigned int count,
-        const L3Address& srcIp, const L3Address& destIp)
+        const void *addr2, unsigned int count2)
 {
-    uint32_t sum = TCPIPchecksum::_checksum(addr, count);
-
-    if (srcIp.getType() == L3Address::IPv4) {
-        ASSERT(destIp.getType() == L3Address::IPv4);
-
-        //sum += srcip;
-        int address = srcIp.toIPv4().getInt();
-        sum += htons(TCPIPchecksum::_checksum(&address, sizeof(uint32)));
-
-        //sum += destip;
-        address = destIp.toIPv4().getInt();
-        sum += htons(TCPIPchecksum::_checksum(&address, sizeof(uint32)));
-    }
-    else if (srcIp.getType() == L3Address::IPv6) {
-        ASSERT(destIp.getType() == L3Address::IPv6);
-
-        //sum += srcip;
-        sum += htons(TCPIPchecksum::_checksum(srcIp.toIPv6().words(), sizeof(uint32) * 4));
-
-        //sum += destip;
-        sum += htons(TCPIPchecksum::_checksum(destIp.toIPv6().words(), sizeof(uint32) * 4));
-    }
-    else
-        throw cRuntimeError("Unknown address type");
-
-    sum += htons(count);    // TCP length
-
-    sum += htons(IP_PROT_TCP);    // PTCL
+    uint32_t sum = TCPIPchecksum::_checksum(addr, count) + TCPIPchecksum::_checksum(addr2, count2);
 
     while (sum >> 16)
         sum = (sum & 0xFFFF) + (sum >> 16);
