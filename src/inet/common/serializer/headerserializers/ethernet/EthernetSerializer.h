@@ -16,9 +16,9 @@
 #ifndef ETHERNETSERIALIZER_H_
 #define ETHERNETSERIALIZER_H_
 
-#include "inet/linklayer/ethernet/EtherFrame.h"
 #include "inet/common/serializer/headers/defs.h"
-#include "inet/common/serializer/ISerializer.h"
+#include "inet/common/serializer/SerializerBase.h"
+#include "inet/linklayer/ethernet/EtherFrame.h"
 
 namespace inet {
 
